@@ -1,0 +1,62 @@
+FROM php:7.3-fpm-buster
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install smtp service
+RUN set -eux; \
+    apt-get update; \
+    apt-get upgrade -y
+
+# Use the default development configuration
+RUN set -eux; \
+    cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
+
+# Add custom fpm configuration
+COPY php-fpm.d/* $PHP_INI_DIR/../php-fpm.d/
+
+# Override default configuration
+COPY conf.d/* $PHP_INI_DIR/conf.d/
+
+# Install bcmath, exif, gd, iconv, intl, mysqli, pdo_mysql and zip modules
+RUN set -eux; \
+    apt-get install -y \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg62-turbo-dev \
+        libxml2-dev \
+        libzip-dev \
+        wget \
+        unzip \
+        git \
+        npm \
+    && docker-php-ext-configure gd \
+        --with-freetype-dir=/usr/include \
+        --with-jpeg-dir=/usr/include \
+    && docker-php-ext-configure zip \
+        --with-libzip=/usr/include \
+    && docker-php-ext-install \
+        bcmath \
+        exif \
+        gd \
+        iconv \
+        intl \
+        mysqli \
+        pdo_mysql \
+        soap \
+        zip \
+    && apt-get remove -y --purge \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg62-turbo-dev \
+        libxml2-dev \
+        libzip-dev \
+    && npm cache clean -f \
+    && npm install -g n \
+    && n 8.17.0
+
+# Prepare install and CMD script
+COPY scripts/* /usr/local/prestashop/
+RUN set -eux; \
+    chmod +x /usr/local/prestashop/*
+
+CMD ["/usr/local/prestashop/docker_run.sh"]

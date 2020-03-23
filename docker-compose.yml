@@ -1,0 +1,22 @@
+version: '3.7'
+
+networks:
+  issue_18247:
+
+services:
+  ##
+  # Service PHP
+  issue_18247_php:
+    container_name: issue_18247
+    build: ./php
+    restart: always
+    expose:
+      - 900
+    volumes:
+      - ./var/log/php:/var/log/php
+      - ./var/www/html:/var/www/html
+    networks:
+      - issue_18247
+    command: [
+      "/usr/local/prestashop/docker-run.sh",
+    ]
