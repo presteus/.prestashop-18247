@@ -17,4 +17,4 @@ services:
       - ./var/www/html:/var/www/html
     networks:
       - issue_18247
-    command: ["/usr/local/prestashop/docker_run.sh"]
+    command: ["/usr/local/prestashop/docker-run.sh"]

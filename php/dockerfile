@@ -68,4 +68,4 @@ COPY scripts/* /usr/local/prestashop/
 RUN set -eux; \
     chmod +x /usr/local/prestashop/*
 
-CMD ["/usr/local/prestashop/docker_run.sh"]
+CMD ["/usr/local/prestashop/docker-run.sh"]
