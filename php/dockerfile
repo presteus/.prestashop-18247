@@ -54,6 +54,15 @@ RUN set -eux; \
     && npm install -g n \
     && n 8.17.0
 
+RUN set -eux; \
+    php -r "copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');" \
+    php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filename=composer \
+    rm -rf /tmp/composer-setup.php
+
+RUN set -eux; \
+    git config --global user.name developer; \
+    git config --global user.email developer@prestashop.local
+
 # Prepare install and CMD script
 COPY scripts/* /usr/local/prestashop/
 RUN set -eux; \
